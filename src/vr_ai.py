@@ -13,21 +13,14 @@ port = 4000 # port number
 bufsize = 4096
 
 
-def main():
-    # parser
-    parser = argparse.ArgumentParser(description='VimRev')
-    parser.add_argument('-m', '--move', help='select first move or passive move.', choices=['Black', 'White'], required=True)
-
-    # parse command-line args
-    args = parser.parse_args()
-
+def client_core(turn):
     with closing(sock):
         sock.connect((host, port))
 
         board = None
         place_candidates = []
         game_turn = None
-        my_turn = args.move
+        my_turn = turn
         placeloc = -1
         pass_flg = False
 
@@ -70,6 +63,15 @@ def main():
                 game_turn = msg['turn']
             except:
                 sock.close()
+
+def main():
+    # parser
+    parser = argparse.ArgumentParser(description='VimRev')
+    parser.add_argument('-m', '--move', help='select first move or passive move.', choices=['Black', 'White'], required=True)
+
+    # parse command-line args
+    args = parser.parse_args()
+    client_core(args.move)
 
 
 if __name__ == '__main__':
