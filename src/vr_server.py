@@ -25,9 +25,6 @@ def server_core(root, board,):
         server_sock.listen(backlog)
 
         while True:
-
-            board.draw()
-
             rready, wready, xready = select.select(readfds, [], [])
             for sock in rready:
                 if sock is server_sock:
@@ -72,10 +69,11 @@ def main():
     root.geometry("960x720")  # window size 960x720
     root.resizable(0, 0)  # Prohibit change of window size
 
-    board = Board()
+    board = Board(root)
 
     server_thread = Thread(target=server_core, name='server_thread', args=(root, board,))
     server_thread.start()
+    root.after(10, board.draw)
     root.mainloop()  # Starts GUI execution.
 
 

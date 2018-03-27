@@ -39,7 +39,6 @@ def main():
                 if(game_turn == my_turn):
                     random.shuffle(place_candidates) # select the place location
                     placeloc = place_candidates[0]
-                    print('# if(game_turn == my_turn)')
                 else:
                     print('not my turn')
                     placeloc = -1 # not my turn
@@ -56,7 +55,7 @@ def main():
             """ receive """
             msg = sock.recv(bufsize)
             msg = pickle.loads(msg)
-            print(msg)
+            print(msg['candidate_move'], msg['turn'])
 
             # if receive message is valid
             try:

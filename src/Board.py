@@ -5,7 +5,8 @@ import tkinter as tk
 
 class Board(object):
 
-    def __init__(self,):
+    def __init__(self, root, ):
+        self.root = root
         self.frame = tk.Frame(width=960, height=720)
         self.frame.place(x=0, y=0)
         self.canvas = tk.Canvas(self.frame, width=720, height=720)
@@ -147,3 +148,4 @@ class Board(object):
             #     self.canvas.create_oval(center_x - 8, center_y - 8, center_x + 8, center_y + 8, fill="Red", outline="Red", tag="disc")
 
         self.canvas.pack()
+        self.root.after(10, self.draw)
