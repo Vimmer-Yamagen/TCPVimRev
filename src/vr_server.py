@@ -6,45 +6,61 @@ import socket
 import select
 import sys
 import pickle
+import copy
+
+from Board import Board
 
 
 server_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 readfds = set([server_sock])
 host = '127.0.0.1' # server host
 port = 4000 # port number
-bufsize = 1024 # buffer size
+bufsize = 4096 # buffer size
 backlog = 2 # max queue number
 
 
-def server_core(root, ):
+def server_core(root, board,):
     try:
         server_sock.bind((host, port))
         server_sock.listen(backlog)
 
         while True:
+
+            board.draw()
+
             rready, wready, xready = select.select(readfds, [], [])
             for sock in rready:
                 if sock is server_sock:
                     conn, address = server_sock.accept()
                     readfds.add(conn)
                 else:
+                    """ receive """
                     msg = sock.recv(bufsize)
                     msg = pickle.loads(msg)
+                    player_turn = None
+                    placeloc = None
+                    cand_move = board.getCanPlace(board.turn)
                     print(msg)
 
-                    s = tk.Label(text=msg)
-                    s.pack()
+                    # if receive message is valid
+                    try:
+                        player_turn = msg['turn']
+                        placeloc = msg['placeloc']
 
-                    snd_msg = pickle.dumps(msg) # dump pickle
-                    sock.send(snd_msg)
-                    if(msg == 'quit'):
+                        if(player_turn == board.turn):
+                            if(board.reverseDisc(player_turn, placeloc) == True):
+                                board.switch_turn()
+                                cand_move = board.getCanPlace(board.turn)
+                    except:
                         sock.close()
-                        readfds.remove(sock)
-                    elif(msg == 'shutdown'):
-                        for rdd in readfds:
-                            rdd.close()
-                        print('server shutdown. good bye!')
-                        sys.exit()
+
+                    """ send """
+                    server_info = {}
+                    server_info['board'] = copy.deepcopy(board.discs)
+                    server_info['candidate_move'] = cand_move
+                    server_info['turn'] = board.turn
+                    snd_msg = pickle.dumps(server_info) # dump pickle
+                    sock.send(snd_msg)
     finally:
         for sock in readfds:
             sock.close()
@@ -56,7 +72,9 @@ def main():
     root.geometry("960x720")  # window size 960x720
     root.resizable(0, 0)  # Prohibit change of window size
 
-    server_thread = Thread(target=server_core, name='server_thread', args=(root,))
+    board = Board()
+
+    server_thread = Thread(target=server_core, name='server_thread', args=(root, board,))
     server_thread.start()
     root.mainloop()  # Starts GUI execution.
 
