@@ -23,6 +23,9 @@ def server_core(board,):
         server_sock.bind((host, port))
         server_sock.listen(backlog)
 
+        if not hasattr(server_core, "turn_counter"): # game counter
+            server_core.turn_counter = 1  # it doesn't exist yet, so initialize it
+
         while True:
             rready, wready, xready = select.select(readfds, [], [])
             for sock in rready:
@@ -50,6 +53,12 @@ def server_core(board,):
                         if(player_turn == board.turn):
                             if(board.reverseDisc(player_turn, placeloc) == True):
                                 board.newest_place = placeloc # last placed disc
+
+                                # draw game info on the listbox
+                                game_info = str(server_core.turn_counter) + '. ' + player_turn + ' ' + str(placeloc)
+                                server_core.turn_counter += 1
+                                board.listbox.insert(tk.END, game_info)
+
                                 board.switch_turn()
                                 cand_move = board.getCanPlace(board.turn)
                                 server_core.pass_counter = 0
@@ -68,7 +77,7 @@ def server_core(board,):
                     snd_msg = pickle.dumps(server_info) # dump pickle
                     sock.send(snd_msg)
 
-                    if(server_core.pass_counter == 2): # all of players pass the game
+                    if(server_core.pass_counter == 4): # all of players pass the game
                         print('game finished!')
                         for rdd in readfds:
                             rdd.close()

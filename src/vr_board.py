@@ -12,6 +12,13 @@ class Board(object):
         self.canvas = tk.Canvas(self.frame, width=960, height=720)
         self.canvas.place(x=0, y=0)
 
+        self.scrollbar = tk.Scrollbar(self.frame, orient=tk.VERTICAL)
+        self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        self.listbox = tk.Listbox(self.frame, width=36, height=30, yscrollcommand=self.scrollbar.set)
+        self.listbox.place(x=730, y=200)
+        self.scrollbar.config(command=self.listbox.yview)
+        
+
         self.discs = [] # disc on the board
         for i in range(100):
             self.discs.append('Space')
@@ -158,8 +165,8 @@ class Board(object):
         # ゲーム情報を描画
         b_info = 'Black : ' + str(self.getDiscNum('Black')) + ' discs'
         w_info = 'White : ' + str(self.getDiscNum('White')) + ' discs'
-        self.canvas.create_text(810, 20, text=b_info, font = ('Helvetica', 16), tag='info')
-        self.canvas.create_text(810, 50, text=w_info, font = ('Helvetica', 16), tag='info')
+        self.canvas.create_text(820, 50, text=b_info, font = ('Helvetica', 16), tag='info')
+        self.canvas.create_text(820, 80, text=w_info, font = ('Helvetica', 16), tag='info')
 
         self.canvas.pack()
         self.root.after(10, self.draw)
