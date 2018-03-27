@@ -8,8 +8,7 @@ import sys
 import pickle
 import copy
 
-from Board import Board
-
+from vr_board import Board
 
 server_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 readfds = set([server_sock])

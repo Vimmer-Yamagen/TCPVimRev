@@ -33,7 +33,7 @@ def main():
 
         while True:
 
-            time.sleep(2) # sleep 2 seconds
+            time.sleep(1) # sleep 1 seconds
 
             """ send """
             try:
