@@ -18,7 +18,7 @@ def main():
     parser = argparse.ArgumentParser(description='VimRev')
     parser.add_argument('-m', '--move', help='select first move or passive move.', choices=['Black', 'White'], required=True)
 
-    # コマンドライン引数の解析
+    # parse command-line args
     args = parser.parse_args()
 
     with closing(sock):
@@ -29,6 +29,7 @@ def main():
         game_turn = None
         my_turn = args.move
         placeloc = -1
+        pass_flg = False
 
         while True:
 
@@ -37,6 +38,10 @@ def main():
             """ send """
             try:
                 if(game_turn == my_turn):
+                    if(not place_candidates): # player passes the game
+                        pass_flg = True
+                        print('pass!')
+
                     random.shuffle(place_candidates) # select the place location
                     placeloc = place_candidates[0]
                 else:
@@ -49,13 +54,14 @@ def main():
                 snd_msg = {}
                 snd_msg['turn'] = my_turn
                 snd_msg['placeloc'] = placeloc
+                snd_msg['pass_flg'] = pass_flg
                 snd_msg = pickle.dumps(snd_msg) # dump pickle
                 sock.send(snd_msg)
 
             """ receive """
             msg = sock.recv(bufsize)
             msg = pickle.loads(msg)
-            print(msg['candidate_move'], msg['turn'])
+            print(msg['candidate_move'], msg['turn']) # print recv message
 
             # if receive message is valid
             try:

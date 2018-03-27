@@ -19,7 +19,7 @@ bufsize = 4096 # buffer size
 backlog = 2 # max queue number
 
 
-def server_core(root, board,):
+def server_core(board,):
     try:
         server_sock.bind((host, port))
         server_sock.listen(backlog)
@@ -37,7 +37,11 @@ def server_core(root, board,):
                     player_turn = None
                     placeloc = None
                     cand_move = board.getCanPlace(board.turn)
-                    print(msg)
+
+                    if not hasattr(server_core, "pass_counter"): # pass counter
+                        server_core.pass_counter = 0  # it doesn't exist yet, so initialize it
+                    
+                    print(msg) # print recv message
 
                     # if receive message is valid
                     try:
@@ -48,6 +52,11 @@ def server_core(root, board,):
                             if(board.reverseDisc(player_turn, placeloc) == True):
                                 board.switch_turn()
                                 cand_move = board.getCanPlace(board.turn)
+                                server_core.pass_counter = 0
+                            elif(msg['pass_flg'] == True): # player passes play
+                                board.switch_turn()
+                                cand_move = board.getCanPlace(board.turn)
+                                server_core.pass_counter += 1
                     except:
                         sock.close()
 
@@ -58,6 +67,12 @@ def server_core(root, board,):
                     server_info['turn'] = board.turn
                     snd_msg = pickle.dumps(server_info) # dump pickle
                     sock.send(snd_msg)
+
+                    if(server_core.pass_counter == 2): # all of players pass the game
+                        print('game finished!')
+                        for rdd in readfds:
+                            rdd.close()
+                        sys.exit()
     finally:
         for sock in readfds:
             sock.close()
@@ -70,9 +85,9 @@ def main():
     root.resizable(0, 0)  # Prohibit change of window size
 
     board = Board(root)
-
-    server_thread = Thread(target=server_core, name='server_thread', args=(root, board,))
+    server_thread = Thread(target=server_core, name='server_thread', args=(board,))
     server_thread.start()
+
     root.after(10, board.draw)
     root.mainloop()  # Starts GUI execution.
 
