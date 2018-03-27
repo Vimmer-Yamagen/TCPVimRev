@@ -26,7 +26,7 @@ def client_core(turn):
 
         while True:
 
-            time.sleep(1) # sleep 1 seconds
+            time.sleep(0.5) # sleep 1 seconds
 
             """ send """
             try:

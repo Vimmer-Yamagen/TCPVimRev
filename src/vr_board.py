@@ -7,9 +7,9 @@ class Board(object):
 
     def __init__(self, root, ):
         self.root = root
-        self.frame = tk.Frame(width=960, height=720)
+        self.frame = tk.Frame(self.root, width=960, height=720)
         self.frame.place(x=0, y=0)
-        self.canvas = tk.Canvas(self.frame, width=720, height=720)
+        self.canvas = tk.Canvas(self.frame, width=960, height=720)
         self.canvas.place(x=0, y=0)
 
         self.discs = [] # disc on the board
@@ -17,6 +17,7 @@ class Board(object):
             self.discs.append('Space')
 
         self.turn = 'Black' # game turn
+        self.newest_place = -1 # last placed disc index
 
         # Initialize the board
         self.Initialize()
@@ -110,12 +111,19 @@ class Board(object):
                             k += d
         return list_canplace
 
+    def getDiscNum(self, turn):
+        number = 0
+        for index, disc in enumerate(self.discs):
+            if(disc == turn):
+                number += 1
+        return number
 
     # draw the board.
     def draw(self, ):
 
         self.canvas.delete("board") # ボードを消す
         self.canvas.delete("disc")  # ボード上の石を消す
+        self.canvas.delete('info') # ゲーム情報を消す
 
         # ボードを描画
         self.canvas.create_rectangle(0, 0, 720, 720, fill='#1E824C', tag="board")
@@ -144,8 +152,14 @@ class Board(object):
             elif(disc == "CanPlace"):    
                 self.canvas.create_oval(center_x - 5, center_y - 5, center_x + 5, center_y + 5, fill="OliveDrab1", outline="OliveDrab1", tag="disc")
             # 最後に打たれた石の場合、マークを付ける
-            # if(disc.newest_place):
-            #     self.canvas.create_oval(center_x - 8, center_y - 8, center_x + 8, center_y + 8, fill="Red", outline="Red", tag="disc")
+            if(index == self.newest_place):
+                self.canvas.create_oval(center_x - 8, center_y - 8, center_x + 8, center_y + 8, fill="Red", outline="Red", tag="disc")
+
+        # ゲーム情報を描画
+        b_info = 'Black : ' + str(self.getDiscNum('Black')) + ' discs'
+        w_info = 'White : ' + str(self.getDiscNum('White')) + ' discs'
+        self.canvas.create_text(810, 20, text=b_info, font = ('Helvetica', 16), tag='info')
+        self.canvas.create_text(810, 50, text=w_info, font = ('Helvetica', 16), tag='info')
 
         self.canvas.pack()
         self.root.after(10, self.draw)

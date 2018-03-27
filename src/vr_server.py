@@ -49,6 +49,7 @@ def server_core(board,):
 
                         if(player_turn == board.turn):
                             if(board.reverseDisc(player_turn, placeloc) == True):
+                                board.newest_place = placeloc # last placed disc
                                 board.switch_turn()
                                 cand_move = board.getCanPlace(board.turn)
                                 server_core.pass_counter = 0
@@ -71,7 +72,7 @@ def server_core(board,):
                         print('game finished!')
                         for rdd in readfds:
                             rdd.close()
-                        sys.exit()
+                        return 
     finally:
         for sock in readfds:
             sock.close()
