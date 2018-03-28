@@ -195,16 +195,18 @@ class Board(object):
             self.canvas.create_text(20, 80 + index * 80, text=str(index + 1), font = ('Helvetica', 12), tag='info')
 
         # ゲーム情報を描画
-        b_info = 'Black : ' + str(self.getDiscNum('Black')) + ' discs'
-        w_info = 'White : ' + str(self.getDiscNum('White')) + ' discs'
-        self.canvas.create_text(760, 50, text=b_info, font = ('Helvetica', 12), justify=tk.LEFT, tag='info')
-        self.canvas.create_text(760, 80, text=w_info, font = ('Helvetica', 12), justify=tk.LEFT, tag='info')
+        self.canvas.create_text(760, 50, text='Black : ', font = ('Helvetica', 12), justify=tk.LEFT, tag='info')
+        self.canvas.create_text(760, 80, text='White : ', font = ('Helvetica', 12), justify=tk.LEFT, tag='info')
+        self.canvas.create_text(820, 50, text=str(self.getDiscNum('Black')), font = ('Helvetica', 12), justify=tk.LEFT, tag='info')
+        self.canvas.create_text(820, 80, text=str(self.getDiscNum('White')), font = ('Helvetica', 12), justify=tk.LEFT, tag='info')
+        self.canvas.create_text(860, 50, text='discs', font = ('Helvetica', 12), justify=tk.LEFT, tag='info')
+        self.canvas.create_text(860, 80, text='discs', font = ('Helvetica', 12), justify=tk.LEFT, tag='info')
 
         # プレーヤーの名前を描画
-        self.canvas.create_oval(710 - 12, 130 - 12, 710 + 12, 130 + 12, fill="Black", outline="Black", tag='info')
-        self.canvas.create_oval(710 - 12, 160 - 12, 710 + 12, 160 + 12, fill="White", outline="White", tag='info')
-        self.canvas.create_text(760, 130, text=self.b_name, font = ('Helvetica', 12), justify=tk.LEFT, tag='info')
-        self.canvas.create_text(760, 160, text=self.w_name, font = ('Helvetica', 12), justify=tk.LEFT, tag='info')
+        self.canvas.create_oval(740 - 12, 130 - 12, 740 + 12, 130 + 12, fill="Black", outline="Black", tag='info')
+        self.canvas.create_oval(740 - 12, 160 - 12, 740 + 12, 160 + 12, fill="White", outline="White", tag='info')
+        self.canvas.create_text(820, 130, text=self.b_name, font = ('Helvetica', 12), justify=tk.LEFT, tag='info')
+        self.canvas.create_text(820, 160, text=self.w_name, font = ('Helvetica', 12), justify=tk.LEFT, tag='info')
 
         self.canvas.pack()
         self.root.after(10, self.draw)

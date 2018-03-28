@@ -77,6 +77,7 @@ def main():
 
     # parse command-line args
     args = parser.parse_args()
+    args.name = args.name[:12] # max name size 12
     client_core(args.move, args.name)
 
 
