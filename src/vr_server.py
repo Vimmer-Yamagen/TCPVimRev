@@ -9,6 +9,8 @@ import pickle
 import copy
 
 from vr_board import Board
+from vr_gui import GUI
+
 
 server_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 readfds = set([server_sock])
@@ -18,7 +20,7 @@ bufsize = 4096 # buffer size
 backlog = 2 # max queue number
 
 
-def server_core(board,):
+def server_core(board, gui,):
     try:
         server_sock.bind((host, port))
         server_sock.listen(backlog)
@@ -36,9 +38,6 @@ def server_core(board,):
                     player_turn = None
                     placeloc = None
                     cand_move = board.getCanPlace(board.turn)
-
-                    if not hasattr(server_core, "pass_counter"): # pass counter
-                        server_core.pass_counter = 0  # it doesn't exist yet, so initialize it
                     
                     print(msg) # print recv message
 
@@ -47,7 +46,7 @@ def server_core(board,):
                     placeloc = msg['placeloc']
 
                     # set player name
-                    board.setName(player_turn, msg['software_name'])
+                    gui.setName(player_turn, msg['software_name'])
 
                     # place disc
                     if(player_turn == board.turn):
@@ -55,29 +54,27 @@ def server_core(board,):
                             board.newest_place = placeloc # last placed disc
 
                             # draw game info on the listbox
-                            board.addList(player_turn, placeloc)
+                            gui.addList(player_turn, board.turn_count, placeloc)
                             board.turn_count += 1
 
                             board.switch_turn()
                             cand_move = board.getCanPlace(board.turn)
-                            server_core.pass_counter = 0
+                            board.pass_count = 0
 
                         elif(msg['pass_flg'] == True): # player passes play
                             board.switch_turn()
                             cand_move = board.getCanPlace(board.turn)
-                            server_core.pass_counter += 1
+                            board.pass_count += 1
 
                     """ send """
                     server_info = {}
-                    server_info['clicked_index'] = board.clicked_index
-                    server_info['board'] = copy.deepcopy(board.discs)
+                    server_info['clicked_index'] = gui.clicked_index
+                    server_info['board'] = copy.deepcopy(board)
                     server_info['candidate_move'] = cand_move
-                    server_info['turn'] = board.turn
-                    server_info['turn_count'] = board.turn_count
                     snd_msg = pickle.dumps(server_info) # dump pickle
                     sock.send(snd_msg)
 
-                    if(board.turn_count > 60 or server_core.pass_counter >= 2): # finish the game.
+                    if(board.turn_count > 60 or board.pass_count >= 2): # finish the game.
                         print('game finished! gg!')
                         for rdd in readfds:
                             rdd.close()
@@ -93,14 +90,15 @@ def main():
     root.geometry("960x720")  # window size 960x720
     root.resizable(0, 0)  # Prohibit change of window size
 
-    board = Board(root)
-    server_thread = Thread(target=server_core, name='server_thread', args=(board,))
+    board = Board()
+    gui = GUI(root)
+    server_thread = Thread(target=server_core, name='server_thread', args=(board, gui,))
     server_thread.start()
 
     # left click callback
-    root.bind("<Button-1>", board.click)
+    root.bind("<Button-1>", gui.click)
 
-    root.after(10, board.draw)
+    root.after(100, gui.draw, board)
     root.mainloop()  # Starts GUI execution.
 
 

@@ -7,6 +7,8 @@ import time
 import random
 import argparse
 
+from vr_board import Board
+
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 host = '127.0.0.1' # server host
 port = 4000 # port number
@@ -63,8 +65,8 @@ def client_core(turn, software_name):
 
                 board = msg['board']
                 place_candidates = msg['candidate_move']
-                game_turn = msg['turn']
-                turn_count = msg['turn_count']
+                game_turn = board.turn
+                turn_count = board.turn_count
             except:
                 print('good bye!')
                 sock.close()
