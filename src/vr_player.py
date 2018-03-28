@@ -1,10 +1,7 @@
 # -*- coding:utf-8 -*-
-import sys
 import socket
 from contextlib import closing
 import pickle
-import time
-import random
 import argparse
 
 from vr_board import Board

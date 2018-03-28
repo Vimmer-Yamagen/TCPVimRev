@@ -4,7 +4,6 @@ from threading import Thread
 import tkinter as tk
 import socket
 import select
-import sys
 import pickle
 import copy
 

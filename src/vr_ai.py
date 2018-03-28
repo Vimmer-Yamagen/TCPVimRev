@@ -1,5 +1,4 @@
 # -*- coding:utf-8 -*-
-import sys
 import socket
 from contextlib import closing
 import pickle
