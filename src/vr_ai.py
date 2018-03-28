@@ -75,8 +75,8 @@ def client_core(turn, software_name):
 def main():
     # parser
     parser = argparse.ArgumentParser(description='VimRev')
-    parser.add_argument('-m', '--move', help='select first move or passive move.', choices=['Black', 'White'], required=True)
-    parser.add_argument('-n', '--name', help='input software name', default='No Name')
+    parser.add_argument('-m', '--move', help='configure first move or passive move.', choices=['Black', 'White'], required=True)
+    parser.add_argument('-n', '--name', help='configure software name', default='No Name')
 
     # parse command-line args
     args = parser.parse_args()
