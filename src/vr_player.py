@@ -20,13 +20,14 @@ def client_core(turn):
         board = None
         place_candidates = []
         game_turn = None
+        turn_count = 0
         my_turn = turn
         placeloc = -1
         pass_flg = False
 
         while True:
 
-            time.sleep(0.5) # sleep 1 seconds
+            time.sleep(0.5) # sleep 0.5 seconds
 
             """ send """
             try:
@@ -50,6 +51,7 @@ def client_core(turn):
                 snd_msg['pass_flg'] = pass_flg
                 snd_msg = pickle.dumps(snd_msg) # dump pickle
                 sock.send(snd_msg)
+                pass_flg = False
 
             """ receive """
             msg = sock.recv(bufsize)
@@ -61,6 +63,7 @@ def client_core(turn):
                 board = msg['board']
                 place_candidates = msg['candidate_move']
                 game_turn = msg['turn']
+                turn_count = msg['turn_count']
             except:
                 sock.close()
 

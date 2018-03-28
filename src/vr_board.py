@@ -14,8 +14,8 @@ class Board(object):
 
         self.scrollbar = tk.Scrollbar(self.frame, orient=tk.VERTICAL)
         self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-        self.listbox = tk.Listbox(self.frame, width=36, height=30, yscrollcommand=self.scrollbar.set)
-        self.listbox.place(x=730, y=200)
+        self.listbox = tk.Listbox(self.frame, width=40, height=30, yscrollcommand=self.scrollbar.set)
+        self.listbox.place(x=700, y=200)
         self.scrollbar.config(command=self.listbox.yview)
         
 
@@ -24,6 +24,7 @@ class Board(object):
             self.discs.append('Space')
 
         self.turn = 'Black' # game turn
+        self.turn_count = 1 # game count
         self.newest_place = -1 # last placed disc index
 
         # Initialize the board
@@ -125,6 +126,11 @@ class Board(object):
                 number += 1
         return number
 
+    def addList(self, turn, placeloc):
+        alphabet = [chr(i) for i in range(65, 65 + 8)]
+        game_info = str(self.turn_count) + '. ' + turn + ' ' + str(alphabet[placeloc % 10 - 1]) + str(int(placeloc / 10))
+        self.listbox.insert(tk.END, game_info)
+
     # draw the board.
     def draw(self, ):
 
@@ -133,40 +139,46 @@ class Board(object):
         self.canvas.delete('info') # ゲーム情報を消す
 
         # ボードを描画
-        self.canvas.create_rectangle(0, 0, 720, 720, fill='#1E824C', tag="board")
+        self.canvas.create_rectangle(40, 40, 680, 680, fill='#1E824C', tag="board")
 
         # ボードのマスを描画
         for i in range(9):
             self.canvas.create_line(
-                i * 90, 0, i * 90, 720, width=1.2, fill="Black", tag="board")
+                i * 80 + 40, 40, i * 80 + 40, 680, width=1.2, fill="Black", tag="board")
             self.canvas.create_line(
-                0, i * 90, 720, i * 90, width=1.2, fill="Black", tag="board")
+                40, i * 80 + 40, 680, i * 80 + 40, width=1.2, fill="Black", tag="board")
 
         # ボードの丸印を描画
-        self.canvas.create_oval(180 - 4, 180 - 4, 180 + 4, 180 + 4, fill="Black", outline="Black", tag="board")
-        self.canvas.create_oval(180 - 4, 540 - 4, 180 + 4, 540 + 4, fill="Black", outline="Black", tag="board")
-        self.canvas.create_oval(540 - 4, 180 - 4, 540 + 4, 180 + 4, fill="Black", outline="Black", tag="board")
-        self.canvas.create_oval(540 - 4, 540 - 4, 540 + 4, 540 + 4, fill="Black", outline="Black", tag="board")
+        self.canvas.create_oval(200 - 4, 200 - 4, 200 + 4, 200 + 4, fill="Black", outline="Black", tag="board")
+        self.canvas.create_oval(200 - 4, 520 - 4, 200 + 4, 520 + 4, fill="Black", outline="Black", tag="board")
+        self.canvas.create_oval(520 - 4, 200 - 4, 520 + 4, 200 + 4, fill="Black", outline="Black", tag="board")
+        self.canvas.create_oval(520 - 4, 520 - 4, 520 + 4, 520 + 4, fill="Black", outline="Black", tag="board")
 
         # 石を描画
         for index, disc in enumerate(self.discs):
-            center_x = 45 + int((index-1) % 10) * 90
-            center_y = 45 + int((index-10) / 10) * 90
+            center_x = 40 + int((index-1) % 10) * 80 + 40
+            center_y = 40 + int((index-10) / 10) * 80 + 40
             if(disc == "Black"):    
-                self.canvas.create_oval(center_x - 43, center_y - 43, center_x + 43, center_y + 43, fill="Black", outline="Black", tag="disc")
+                self.canvas.create_oval(center_x - 38, center_y - 38, center_x + 38, center_y + 38, fill="Black", outline="Black", tag="disc")
             elif(disc == "White"):    
-                self.canvas.create_oval(center_x - 44, center_y - 44, center_x + 44, center_y + 44, fill="White", outline="Black", tag="disc")
-            elif(disc == "CanPlace"):    
-                self.canvas.create_oval(center_x - 5, center_y - 5, center_x + 5, center_y + 5, fill="OliveDrab1", outline="OliveDrab1", tag="disc")
+                self.canvas.create_oval(center_x - 39, center_y - 39, center_x + 39, center_y + 39, fill="White", outline="Black", tag="disc")
+            elif(disc == "CanPlace"):
+                self.canvas.create_oval(center_x - 4, center_y - 4, center_x + 4, center_y + 4, fill="OliveDrab1", outline="OliveDrab1", tag="disc")
             # 最後に打たれた石の場合、マークを付ける
             if(index == self.newest_place):
-                self.canvas.create_oval(center_x - 8, center_y - 8, center_x + 8, center_y + 8, fill="Red", outline="Red", tag="disc")
+                self.canvas.create_oval(center_x - 6, center_y - 6, center_x + 6, center_y + 6, fill="Red", outline="Red", tag="disc")
+
+        # A ~ H, 1 ~ 8
+        alphabet_list = [chr(i) for i in range(65, 65 + 8)]
+        for index, alphabet in enumerate(alphabet_list):
+            self.canvas.create_text(80 + index * 80, 20, text=alphabet, font = ('Helvetica', 12), tag='info')
+            self.canvas.create_text(20, 80 + index * 80, text=str(index + 1), font = ('Helvetica', 12), tag='info')
 
         # ゲーム情報を描画
         b_info = 'Black : ' + str(self.getDiscNum('Black')) + ' discs'
         w_info = 'White : ' + str(self.getDiscNum('White')) + ' discs'
-        self.canvas.create_text(820, 50, text=b_info, font = ('Helvetica', 16), tag='info')
-        self.canvas.create_text(820, 80, text=w_info, font = ('Helvetica', 16), tag='info')
+        self.canvas.create_text(760, 50, text=b_info, font = ('Helvetica', 12), tag='info')
+        self.canvas.create_text(760, 80, text=w_info, font = ('Helvetica', 12), justify=tk.LEFT, tag='info')
 
         self.canvas.pack()
         self.root.after(10, self.draw)
