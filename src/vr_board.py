@@ -23,6 +23,9 @@ class Board(object):
         for i in range(100):
             self.discs.append('Space')
 
+        self.b_name = None # black player name
+        self.w_name = None # white player name
+
         self.turn = 'Black' # game turn
         self.turn_count = 1 # game count
         self.newest_place = -1 # last placed disc index
@@ -53,6 +56,12 @@ class Board(object):
         self.discs[43] = 'CanPlace'
         self.discs[56] = 'CanPlace'
         self.discs[65] = 'CanPlace'
+
+    def setName(self, turn, name):
+        if(turn == 'Black' and self.b_name is None):
+            self.b_name = name
+        elif(turn == 'White' and self.w_name is None):
+            self.w_name = name
 
     # if place index is valid, reverseDisc and return True. else return False
     def reverseDisc(self, turn, index):
@@ -177,8 +186,14 @@ class Board(object):
         # ゲーム情報を描画
         b_info = 'Black : ' + str(self.getDiscNum('Black')) + ' discs'
         w_info = 'White : ' + str(self.getDiscNum('White')) + ' discs'
-        self.canvas.create_text(760, 50, text=b_info, font = ('Helvetica', 12), tag='info')
+        self.canvas.create_text(760, 50, text=b_info, font = ('Helvetica', 12), justify=tk.LEFT, tag='info')
         self.canvas.create_text(760, 80, text=w_info, font = ('Helvetica', 12), justify=tk.LEFT, tag='info')
+
+        # プレーヤーの名前を描画
+        self.canvas.create_oval(710 - 12, 130 - 12, 710 + 12, 130 + 12, fill="Black", outline="Black", tag='info')
+        self.canvas.create_oval(710 - 12, 160 - 12, 710 + 12, 160 + 12, fill="White", outline="White", tag='info')
+        self.canvas.create_text(760, 130, text=self.b_name, font = ('Helvetica', 12), justify=tk.LEFT, tag='info')
+        self.canvas.create_text(760, 160, text=self.w_name, font = ('Helvetica', 12), justify=tk.LEFT, tag='info')
 
         self.canvas.pack()
         self.root.after(10, self.draw)

@@ -47,6 +47,9 @@ def server_core(board,):
                         player_turn = msg['turn']
                         placeloc = msg['placeloc']
 
+                        # set player name
+                        board.setName(player_turn, msg['software_name'])
+
                         # place disc
                         if(player_turn == board.turn):
                             if(board.reverseDisc(player_turn, placeloc) == True):

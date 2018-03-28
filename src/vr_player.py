@@ -13,10 +13,11 @@ port = 4000 # port number
 bufsize = 4096
 
 
-def client_core(turn):
+def client_core(turn, software_name):
     with closing(sock):
         sock.connect((host, port))
 
+        name = software_name
         board = None
         place_candidates = []
         game_turn = None
@@ -46,6 +47,7 @@ def client_core(turn):
                 placeloc = -1 # catch exceptions
             finally:
                 snd_msg = {}
+                snd_msg['software_name'] = name
                 snd_msg['turn'] = my_turn
                 snd_msg['placeloc'] = placeloc
                 snd_msg['pass_flg'] = pass_flg
@@ -71,10 +73,11 @@ def main():
     # parser
     parser = argparse.ArgumentParser(description='VimRev')
     parser.add_argument('-m', '--move', help='select first move or passive move.', choices=['Black', 'White'], required=True)
+    parser.add_argument('-n', '--name', help='input software name', default='No Name', required=True)
 
     # parse command-line args
     args = parser.parse_args()
-    client_core(args.move)
+    client_core(args.move, args.name)
 
 
 if __name__ == '__main__':
