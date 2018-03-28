@@ -40,33 +40,34 @@ class GUI(object):
 
     def addList(self, turn, turn_count, placeloc):
         alphabet = [chr(i) for i in range(65, 65 + 8)]
-        game_info = str(turn_count) + '. ' + turn + ' ' + str(alphabet[placeloc % 10 - 1]) + str(int(placeloc / 10))
+        # game_info = str(turn_count) + '. ' + turn + '       ' + str(alphabet[placeloc % 10 - 1]) + str(int(placeloc / 10))
+        game_info = '{:0>2}{:>8}{:>3}'.format(str(turn_count) + '.', turn + ' :', str(alphabet[placeloc % 10 - 1]) + str(int(placeloc / 10)))
         self.listbox.insert(tk.END, game_info)
 
     # draw the board.
     def draw(self, board,):
 
-        self.canvas.delete("board") # ボードを消す
-        self.canvas.delete("disc")  # ボード上の石を消す
-        self.canvas.delete('info') # ゲーム情報を消す
+        self.canvas.delete("board") # delete objects with "board" tag
+        self.canvas.delete("disc")  # delete objects with "disc" tag
+        self.canvas.delete('info') # delete objects with "info" tag
 
-        # ボードを描画
+        # draw the board
         self.canvas.create_rectangle(40, 40, 680, 680, fill='#1E824C', tag="board")
 
-        # ボードのマスを描画
+        # draw squares on the board
         for i in range(9):
             self.canvas.create_line(
                 i * 80 + 40, 40, i * 80 + 40, 680, width=1.2, fill="Black", tag="board")
             self.canvas.create_line(
                 40, i * 80 + 40, 680, i * 80 + 40, width=1.2, fill="Black", tag="board")
 
-        # ボードの丸印を描画
+        # draw circles on the board
         self.canvas.create_oval(200 - 4, 200 - 4, 200 + 4, 200 + 4, fill="Black", outline="Black", tag="board")
         self.canvas.create_oval(200 - 4, 520 - 4, 200 + 4, 520 + 4, fill="Black", outline="Black", tag="board")
         self.canvas.create_oval(520 - 4, 200 - 4, 520 + 4, 200 + 4, fill="Black", outline="Black", tag="board")
         self.canvas.create_oval(520 - 4, 520 - 4, 520 + 4, 520 + 4, fill="Black", outline="Black", tag="board")
 
-        # 石を描画
+        # draw discs
         for index, disc in enumerate(board.discs):
             center_x = 40 + int((index-1) % 10) * 80 + 40
             center_y = 40 + int((index-10) / 10) * 80 + 40
@@ -76,7 +77,7 @@ class GUI(object):
                 self.canvas.create_oval(center_x - 39, center_y - 39, center_x + 39, center_y + 39, fill="White", outline="Black", tag="disc")
             elif(disc == "CanPlace"):
                 self.canvas.create_oval(center_x - 4, center_y - 4, center_x + 4, center_y + 4, fill="OliveDrab1", outline="OliveDrab1", tag="disc")
-            # 最後に打たれた石の場合、マークを付ける
+            # In case of the last placed disc, mark it
             if(index == board.newest_place):
                 self.canvas.create_oval(center_x - 6, center_y - 6, center_x + 6, center_y + 6, fill="Red", outline="Red", tag="disc")
 
@@ -86,7 +87,7 @@ class GUI(object):
             self.canvas.create_text(80 + index * 80, 20, text=alphabet, font = ('Helvetica', 12), tag='info')
             self.canvas.create_text(20, 80 + index * 80, text=str(index + 1), font = ('Helvetica', 12), tag='info')
 
-        # ゲーム情報を描画
+        # draw the game info
         self.canvas.create_text(760, 50, text='Black : ', font = ('Helvetica', 12), justify=tk.LEFT, tag='info')
         self.canvas.create_text(760, 80, text='White : ', font = ('Helvetica', 12), justify=tk.LEFT, tag='info')
         self.canvas.create_text(820, 50, text=str(board.getDiscNum('Black')), font = ('Helvetica', 12), justify=tk.LEFT, tag='info')
@@ -94,7 +95,7 @@ class GUI(object):
         self.canvas.create_text(860, 50, text='discs', font = ('Helvetica', 12), justify=tk.LEFT, tag='info')
         self.canvas.create_text(860, 80, text='discs', font = ('Helvetica', 12), justify=tk.LEFT, tag='info')
 
-        # プレーヤーの名前を描画
+        # draw player names
         self.canvas.create_oval(740 - 12, 130 - 12, 740 + 12, 130 + 12, fill="Black", outline="Black", tag='info')
         self.canvas.create_oval(740 - 12, 160 - 12, 740 + 12, 160 + 12, fill="White", outline="White", tag='info')
         self.canvas.create_text(820, 130, text=self.b_name, font = ('Helvetica', 12), justify=tk.LEFT, tag='info')

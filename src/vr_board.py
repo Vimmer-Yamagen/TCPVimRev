@@ -50,7 +50,7 @@ class Board(object):
             return False
         
         list_reverse = []
-        direction = [-11, -10, -9, -1, +1, +9, +10, +11] # 8方向探索
+        direction = [-11, -10, -9, -1, +1, +9, +10, +11] # 8 direction search
         myDisc = "Black" if (turn == "Black") else "White"
         yourDisc = "Black" if (turn == "White") else "White"
 
@@ -80,16 +80,16 @@ class Board(object):
             self.turn = 'Black'
 
 
-    # ボード上の着手可能場所に印を付けて着手可能場所のリストを返す
+    # Return a list of places you can place after marking on the board
     def getCanPlace(self, turn):
 
-        # 着手可能場所の印を全て消す
+        # delete all mark
         for index, disc in enumerate(self.discs):
             if(disc == "CanPlace"):
                 self.discs[index] = "Space"
 
         list_canplace = []
-        direction = [-11, -10, -9, -1, +1, +9, +10, +11] # 8方向探索
+        direction = [-11, -10, -9, -1, +1, +9, +10, +11] # 8 direction search
         myDisc = "Black" if (turn == "Black") else "White"
         yourDisc = "Black" if (turn == "White") else "White"
 
