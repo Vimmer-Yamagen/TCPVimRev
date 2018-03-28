@@ -10,11 +10,11 @@ It is simple reversi software.
 ## How to use  
 
 First of all, you must launch the server.  
-> python src/vr_server.py
+> python src/vr_server.py  
 
 Second, you must launch AI or Player(2 Clients).  
-> python src/vr_ai.py -n NameYouWantToName -m Black(or White)
-> python src/vr_player.py -n NameYouWantToName -m Black(or White)
+> python src/vr_ai.py -n NameYouWantToName -m Black(or White)  
+> python src/vr_player.py -n NameYouWantToName -m Black(or White)  
 
 --name / -n -> configure a name which you want to name  
 --move / -m -> configure Black or White (first move is Black and passive move is White.)  
