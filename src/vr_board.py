@@ -141,7 +141,7 @@ class Board(object):
 
     def getDiscNum(self, turn):
         number = 0
-        for index, disc in enumerate(self.discs):
+        for disc in self.discs:
             if(disc == turn):
                 number += 1
         return number
