@@ -26,10 +26,9 @@ def client_core(turn, software_name):
         placeloc = -1
         pass_flg = False
 
+        clicked_index = -1
+
         while True:
-
-            time.sleep(0.5) # sleep 0.5 seconds
-
             """ send """
             try:
                 if(game_turn == my_turn):
@@ -37,8 +36,7 @@ def client_core(turn, software_name):
                         pass_flg = True
                         print('pass!')
 
-                    random.shuffle(place_candidates) # select the place location
-                    placeloc = place_candidates[0]
+                    placeloc = clicked_index
                 else:
                     print('not my turn')
                     placeloc = -1 # not my turn
@@ -62,6 +60,7 @@ def client_core(turn, software_name):
 
             # if receive message is valid
             try:
+                clicked_index = msg['clicked_index']
                 board = msg['board']
                 place_candidates = msg['candidate_move']
                 game_turn = msg['turn']
@@ -73,7 +72,7 @@ def main():
     # parser
     parser = argparse.ArgumentParser(description='VimRev')
     parser.add_argument('-m', '--move', help='select first move or passive move.', choices=['Black', 'White'], required=True)
-    parser.add_argument('-n', '--name', help='input software name', default='No Name', required=True)
+    parser.add_argument('-n', '--name', help='input software name', default='No Name')
 
     # parse command-line args
     args = parser.parse_args()

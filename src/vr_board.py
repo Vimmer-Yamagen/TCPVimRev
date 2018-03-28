@@ -30,6 +30,8 @@ class Board(object):
         self.turn_count = 1 # game count
         self.newest_place = -1 # last placed disc index
 
+        self.clicked_index = -1 # board index which human player clicked
+
         # Initialize the board
         self.Initialize()
 
@@ -57,11 +59,20 @@ class Board(object):
         self.discs[56] = 'CanPlace'
         self.discs[65] = 'CanPlace'
 
+
+    def click(self, mouse):
+        # out of the board
+        if(40 > mouse.x or mouse.x > 680 or 40 > mouse.y or mouse.y > 680):
+            return
+        self.clicked_index = int((mouse.y - 40) / 80 + 1) * 10 + int((mouse.x - 40) / 80 + 1)
+
+
     def setName(self, turn, name):
         if(turn == 'Black' and self.b_name is None):
             self.b_name = name
         elif(turn == 'White' and self.w_name is None):
             self.w_name = name
+
 
     # if place index is valid, reverseDisc and return True. else return False
     def reverseDisc(self, turn, index):

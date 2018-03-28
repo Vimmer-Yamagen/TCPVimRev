@@ -72,6 +72,7 @@ def server_core(board,):
 
                     """ send """
                     server_info = {}
+                    server_info['clicked_index'] = board.clicked_index
                     server_info['board'] = copy.deepcopy(board.discs)
                     server_info['candidate_move'] = cand_move
                     server_info['turn'] = board.turn
@@ -98,6 +99,9 @@ def main():
     board = Board(root)
     server_thread = Thread(target=server_core, name='server_thread', args=(board,))
     server_thread.start()
+
+    # left click callback
+    root.bind("<Button-1>", board.click)
 
     root.after(10, board.draw)
     root.mainloop()  # Starts GUI execution.
