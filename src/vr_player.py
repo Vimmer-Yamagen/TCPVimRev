@@ -54,19 +54,20 @@ def client_core(turn, software_name):
                 pass_flg = False
 
             """ receive """
-            msg = sock.recv(bufsize)
-            msg = pickle.loads(msg)
-            print(msg['candidate_move'], msg['turn']) # print recv message
-
-            # if receive message is valid
             try:
+                msg = sock.recv(bufsize)
+                msg = pickle.loads(msg)
+                # print(msg['candidate_move'], msg['turn']) # print recv message
+                
                 clicked_index = msg['clicked_index']
                 board = msg['board']
                 place_candidates = msg['candidate_move']
                 game_turn = msg['turn']
                 turn_count = msg['turn_count']
             except:
+                print('good bye!')
                 sock.close()
+                return
 
 def main():
     # parser

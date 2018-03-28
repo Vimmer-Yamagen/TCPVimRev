@@ -43,32 +43,29 @@ def server_core(board,):
                     print(msg) # print recv message
 
                     # if receive message is valid
-                    try:
-                        player_turn = msg['turn']
-                        placeloc = msg['placeloc']
+                    player_turn = msg['turn']
+                    placeloc = msg['placeloc']
 
-                        # set player name
-                        board.setName(player_turn, msg['software_name'])
+                    # set player name
+                    board.setName(player_turn, msg['software_name'])
 
-                        # place disc
-                        if(player_turn == board.turn):
-                            if(board.reverseDisc(player_turn, placeloc) == True):
-                                board.newest_place = placeloc # last placed disc
+                    # place disc
+                    if(player_turn == board.turn):
+                        if(board.reverseDisc(player_turn, placeloc) == True):
+                            board.newest_place = placeloc # last placed disc
 
-                                # draw game info on the listbox
-                                board.addList(player_turn, placeloc)
-                                board.turn_count += 1
+                            # draw game info on the listbox
+                            board.addList(player_turn, placeloc)
+                            board.turn_count += 1
 
-                                board.switch_turn()
-                                cand_move = board.getCanPlace(board.turn)
-                                server_core.pass_counter = 0
+                            board.switch_turn()
+                            cand_move = board.getCanPlace(board.turn)
+                            server_core.pass_counter = 0
 
-                            elif(msg['pass_flg'] == True): # player passes play
-                                board.switch_turn()
-                                cand_move = board.getCanPlace(board.turn)
-                                server_core.pass_counter += 1
-                    except:
-                        sock.close()
+                        elif(msg['pass_flg'] == True): # player passes play
+                            board.switch_turn()
+                            cand_move = board.getCanPlace(board.turn)
+                            server_core.pass_counter += 1
 
                     """ send """
                     server_info = {}
@@ -80,8 +77,8 @@ def server_core(board,):
                     snd_msg = pickle.dumps(server_info) # dump pickle
                     sock.send(snd_msg)
 
-                    if(server_core.pass_counter == 4): # all of players pass the game
-                        print('game finished!')
+                    if(board.turn_count > 60 or server_core.pass_counter >= 2): # finish the game.
+                        print('game finished! gg!')
                         for rdd in readfds:
                             rdd.close()
                         return 
