@@ -19,6 +19,10 @@ Second, you must launch AI or Player(2 Clients).
 --name / -n -> configure a name which you want to name  
 --move / -m -> configure Black or White (first move is Black and passive move is White.)  
 
+### How to start/end the game  
+Ctrl-s -> start the game.  
+Ctrl-c or Ctrl-q -> end the game and shutdown the server.  
+
 ## Memo  
 + And I implement AI which move randomly. If you rewrite client_core function in vr_ai.py, you are able to make more powerful AI.  
 
