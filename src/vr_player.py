@@ -37,7 +37,7 @@ def client_core(turn, software_name):
 
                     placeloc = clicked_index
                 else:
-                    print('not my turn')
+                    # print('not my turn')
                     placeloc = -1 # not my turn
             except:
                 print('catch exceptions')
@@ -51,6 +51,7 @@ def client_core(turn, software_name):
                 snd_msg = pickle.dumps(snd_msg) # dump pickle
                 sock.send(snd_msg)
                 pass_flg = False
+            """""""""""" # end send
 
             """ receive """
             try:
@@ -67,6 +68,7 @@ def client_core(turn, software_name):
                 print('good bye!')
                 sock.close()
                 return
+            """""""""""" # end receive
 
 def main():
     # parser
@@ -76,7 +78,6 @@ def main():
 
     # parse command-line args
     args = parser.parse_args()
-    args.name = args.name[:12] # max name size 12
     client_core(args.move, args.name)
 
 

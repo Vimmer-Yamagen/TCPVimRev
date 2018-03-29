@@ -41,7 +41,7 @@ def client_core(turn, software_name):
                     random.shuffle(place_candidates) # select the place location
                     placeloc = place_candidates[0]
                 else:
-                    print('not my turn')
+                    # print('not my turn')
                     placeloc = -1 # not my turn
             except:
                 print('catch exceptions')
@@ -79,7 +79,6 @@ def main():
 
     # parse command-line args
     args = parser.parse_args()
-    args.name = args.name[:12] # max name size 12
     client_core(args.move, args.name)
 
 

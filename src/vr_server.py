@@ -37,7 +37,7 @@ def server_core(board, gui,):
                     player_turn = None
                     placeloc = None
                     cand_move = board.getCanPlace(board.turn)
-                    
+
                     print(msg) # print recv message
 
                     # if receive message is valid
@@ -64,17 +64,33 @@ def server_core(board, gui,):
                             board.switch_turn()
                             cand_move = board.getCanPlace(board.turn)
                             board.pass_count += 1
+                    """""""""""" # end receive
 
                     """ send """
                     server_info = {}
                     server_info['clicked_index'] = gui.clicked_index
                     server_info['board'] = copy.deepcopy(board)
                     server_info['candidate_move'] = cand_move
+
+                    # the game hasn't start yet
+                    if(not gui.start_flg):
+                        server_info['board'].turn = 'None'
+                        server_info['candidate_move'] = []
+
                     snd_msg = pickle.dumps(server_info) # dump pickle
                     sock.send(snd_msg)
+                    """""""""""" # end send
 
-                    if(board.turn_count > 60 or board.pass_count >= 2): # finish the game.
+                    # finish the game.
+                    if(board.turn_count > 60 or board.pass_count >= 2):
                         print('game finished! gg!')
+                        for rdd in readfds:
+                            rdd.close()
+                        return 
+
+                    # end the game and shutdown the server.
+                    if(gui.end_flg):
+                        print('server shutdown!')
                         for rdd in readfds:
                             rdd.close()
                         return 
@@ -96,6 +112,11 @@ def main():
 
     # left click callback
     root.bind("<Button-1>", gui.click)
+
+    # key press callback
+    root.bind("<Control-s>", gui.key) # start the game.
+    root.bind("<Control-q>", gui.key) # end the game.
+    root.bind("<Control-c>", gui.key) # end the game.
 
     root.after(100, gui.draw, board)
     root.mainloop()  # Starts GUI execution.

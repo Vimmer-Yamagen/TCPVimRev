@@ -23,6 +23,9 @@ class GUI(object):
 
         self.clicked_index = -1 # board index which human player clicked
 
+        self.start_flg = False # if True, start the game.
+        self.end_flg = False # if True, end the game.
+
 
     def click(self, mouse):
         # out of the board
@@ -31,11 +34,18 @@ class GUI(object):
         self.clicked_index = int((mouse.y - 40) / 80 + 1) * 10 + int((mouse.x - 40) / 80 + 1)
 
 
+    def key(self, event):
+        if(event.keysym == 's'):
+            self.start_flg = True
+        elif(event.keysym == 'q' or event.keysym == 'c'):
+            self.end_flg = True
+
+
     def setName(self, turn, name):
         if(turn == 'Black' and self.b_name is None):
-            self.b_name = name
+            self.b_name = name[:12]
         elif(turn == 'White' and self.w_name is None):
-            self.w_name = name
+            self.w_name = name[:12]
 
 
     def addList(self, turn, turn_count, placeloc):
@@ -96,9 +106,9 @@ class GUI(object):
         self.canvas.create_text(860, 80, text='discs', font = ('Helvetica', 12), justify=tk.LEFT, tag='info')
 
         # draw player names
-        self.canvas.create_oval(740 - 12, 130 - 12, 740 + 12, 130 + 12, fill="Black", outline="Black", tag='info')
+        self.canvas.create_oval(740 - 12, 120 - 12, 740 + 12, 120 + 12, fill="Black", outline="Black", tag='info')
         self.canvas.create_oval(740 - 12, 160 - 12, 740 + 12, 160 + 12, fill="White", outline="White", tag='info')
-        self.canvas.create_text(820, 130, text=self.b_name, font = ('Helvetica', 12), justify=tk.LEFT, tag='info')
+        self.canvas.create_text(820, 120, text=self.b_name, font = ('Helvetica', 12), justify=tk.LEFT, tag='info')
         self.canvas.create_text(820, 160, text=self.w_name, font = ('Helvetica', 12), justify=tk.LEFT, tag='info')
 
         self.canvas.pack()
