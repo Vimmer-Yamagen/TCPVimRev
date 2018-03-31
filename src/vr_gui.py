@@ -14,9 +14,18 @@ class GUI(object):
 
         self.scrollbar = tk.Scrollbar(self.frame, orient=tk.VERTICAL)
         self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-        self.listbox = tk.Listbox(self.frame, width=40, height=30, yscrollcommand=self.scrollbar.set)
+        self.listbox = tk.Listbox(self.frame, width=40, height=26, yscrollcommand=self.scrollbar.set)
         self.listbox.place(x=700, y=200)
         self.scrollbar.config(command=self.listbox.yview)
+
+        # the board Rewind / Skip Button
+        self.back_button = tk.Button(text='<', width=15, height=2)
+        self.back_button.place(x=700, y=640)
+        self.back_button.bind('<Button-1>', self.rewind)
+
+        self.forward_button = tk.Button(text='>', width=15, height=2)
+        self.forward_button.place(x=830, y=640)
+        self.forward_button.bind('<Button-1>', self.skip)
         
         self.b_name = None # black player name
         self.w_name = None # white player name
@@ -39,6 +48,16 @@ class GUI(object):
             self.start_flg = True
         elif(event.keysym == 'q' or event.keysym == 'c'):
             self.end_flg = True
+
+
+    # the board rewind button
+    def rewind(self, event):
+        print('rewind')
+
+    
+    # the board skip button
+    def skip(self, event):
+        print('skip')
 
 
     def setName(self, turn, name):
