@@ -7,9 +7,6 @@ class Board(object):
 
     def __init__(self, ):
         self.discs = [] # disc on the board
-        for i in range(100):
-            self.discs.append('Space')
-
         self.turn = 'Black' # game turn
         self.pass_count = 0 # pass count
         self.turn_count = 1 # game count
@@ -20,7 +17,17 @@ class Board(object):
 
 
     # Initialize the board
+    '''
+    Ban : out of the board.
+    Space : Free space on the board.
+    Black : Place where black disc is placed.
+    White Place where white disc is placed.
+    CanPlace : Place where player can place disc on this turn.
+    '''
     def Initialize(self, ):
+        for i in range(100):
+            self.discs.append('Space')
+
         for i in range(0, 10):
             self.discs[i] = 'Ban'
             self.discs[i + 90] = 'Ban'
@@ -108,6 +115,8 @@ class Board(object):
                             k += d
         return list_canplace
 
+
+    # return disc number
     def getDiscNum(self, turn):
         number = 0
         for disc in self.discs:

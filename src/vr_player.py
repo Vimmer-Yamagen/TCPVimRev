@@ -20,7 +20,6 @@ def client_core(turn, software_name):
         board = None
         place_candidates = []
         game_turn = None
-        turn_count = 0
         my_turn = turn
         placeloc = -1
         pass_flg = False
@@ -63,7 +62,6 @@ def client_core(turn, software_name):
                 board = msg['board']
                 place_candidates = msg['candidate_move']
                 game_turn = board.turn
-                turn_count = board.turn_count
             except:
                 print('good bye!')
                 sock.close()
