@@ -24,6 +24,6 @@ Ctrl-s -> start the game.
 Ctrl-c or Ctrl-q -> end the game and shutdown the server.  
 
 ## Memo  
-+ And I implement AI which move randomly. If you rewrite client_core function in vr_ai.py, you are able to make more powerful AI.  
++ I implement AI which move randomly. If you rewrite client_core function in vr_ai.py, you are able to make more powerful AI.  
 
 + Enjoy  
