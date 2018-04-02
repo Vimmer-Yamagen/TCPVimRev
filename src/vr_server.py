@@ -91,6 +91,7 @@ def server_core(board, gui,):
     finally:
         for sock in readfds:
             sock.close()
+        return
 
 
 def main():
