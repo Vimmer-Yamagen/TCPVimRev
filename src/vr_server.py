@@ -20,6 +20,7 @@ backlog = 2 # max queue number
 
 
 def server_core(board, gui,):
+
     try:
         server_sock.bind((host, port))
         server_sock.listen(backlog)
@@ -34,15 +35,13 @@ def server_core(board, gui,):
                     """ receive """
                     msg = sock.recv(bufsize)
                     msg = pickle.loads(msg)
-                    player_turn = None
-                    placeloc = None
-                    cand_move = board.getCanPlace(board.turn)
 
                     print(msg) # print recv message
 
                     # if receive message is valid
                     player_turn = msg['turn']
                     placeloc = msg['placeloc']
+                    cand_move = board.getCanPlace(board.turn)
 
                     # set player name
                     gui.setName(player_turn, msg['software_name'])
@@ -55,7 +54,6 @@ def server_core(board, gui,):
                             # draw game info on the listbox
                             gui.addList(player_turn, board.turn_count, placeloc)
                             board.turn_count += 1
-
                             board.switch_turn()
                             cand_move = board.getCanPlace(board.turn)
                             board.pass_count = 0
@@ -64,7 +62,7 @@ def server_core(board, gui,):
                             board.switch_turn()
                             cand_move = board.getCanPlace(board.turn)
                             board.pass_count += 1
-                    """""""""""" # end receive
+                    """ end receive """
 
                     """ send """
                     server_info = {}
@@ -79,27 +77,24 @@ def server_core(board, gui,):
 
                     snd_msg = pickle.dumps(server_info) # dump pickle
                     sock.send(snd_msg)
-                    """""""""""" # end send
+                    """ end send """
 
-                    # finish the game.
-                    if(board.turn_count > 60 or board.pass_count >= 2):
-                        print('game finished! gg!')
+                    # finish the game or server shutdown command is pressed.
+                    if(board.turn_count > 60 or board.pass_count >= 2 or gui.end_flg):
+                        if(board.turn_count > 60 or board.pass_count >= 2):
+                            print('game finished! gg!')
+                        if(gui.end_flg):
+                            print('server shutdown!')
                         for rdd in readfds:
                             rdd.close()
-                        return 
-
-                    # end the game and shutdown the server.
-                    if(gui.end_flg):
-                        print('server shutdown!')
-                        for rdd in readfds:
-                            rdd.close()
-                        return 
+                        return         
     finally:
         for sock in readfds:
             sock.close()
 
 
 def main():
+
     root = tk.Tk()  # create root window
     root.title("VimRev")  # window title
     root.geometry("960x720")  # window size 960x720
