@@ -80,14 +80,12 @@ def server_core(board, gui,):
                     """ end send """
 
                     # finish the game or server shutdown command is pressed.
-                    if(board.turn_count > 60 or board.pass_count >= 2 or gui.end_flg):
-                        if(board.turn_count > 60 or board.pass_count >= 2):
-                            print('game finished! gg!')
-                        if(gui.end_flg):
-                            print('server shutdown!')
-                        for rdd in readfds:
-                            rdd.close()
-                        return         
+                    if(board.turn_count > 60 or board.pass_count >= 2):
+                        print('game finished! gg!')
+                        return
+                    if(gui.end_flg):
+                        print('server shutdown!')
+                        return
     finally:
         for sock in readfds:
             sock.close()
