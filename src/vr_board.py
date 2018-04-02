@@ -40,14 +40,9 @@ class Board(object):
             else:
                 self.discs[i] = 'Space'
 
-        self.discs[45] = 'Black'
-        self.discs[54] = 'Black'
-        self.discs[44] = 'White'
-        self.discs[55] = 'White'
-        self.discs[34] = 'CanPlace'
-        self.discs[43] = 'CanPlace'
-        self.discs[56] = 'CanPlace'
-        self.discs[65] = 'CanPlace'
+        self.discs[45] = self.discs[54] = 'Black'
+        self.discs[44] = self.discs[55] = 'White'
+        self.discs[34] = self.discs[43] = self.discs[56] = self.discs[65] = 'CanPlace'
 
 
     # if place index is valid, reverseDisc and return True. else return False
@@ -73,7 +68,7 @@ class Board(object):
                 elif(self.discs[j] == "Space" or self.discs[j] == "CanPlace" or self.discs[j] == "Ban"):
                     list_reverse = []
                     break
-                j+= d
+                j += d
 
         self.discs[index] = myDisc
         return True
