@@ -44,7 +44,7 @@ def client_core(turn, software_name):
                     # print('not my turn')
                     placeloc = -1 # not my turn
             except:
-                print('catch exceptions')
+                # print('catch exceptions')
                 placeloc = -1 # catch exceptions
             finally:
                 snd_msg = {}

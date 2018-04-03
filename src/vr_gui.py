@@ -19,6 +19,10 @@ class GUI(object):
         self.scrollbar.config(command=self.listbox.yview)
         self.listbox.place(x=700, y=200)
 
+        self.draw_count_box = tk.Listbox(self.frame, font = ('Helvetica', 18), width=2, height=1)
+        self.draw_count_box.insert(1, 0)
+        self.draw_count_box.place(x=806, y=645)
+
         # board reference
         self.board = board
 
@@ -160,7 +164,11 @@ class GUI(object):
 
         # ListBox highlight draw count
         # self.listbox.see(draw_count - 1)
-        self.listbox.activate (draw_count - 1)
+        self.listbox.activate(draw_count - 1)
+
+        # draw count list box
+        self.draw_count_box.delete(0, last=None)
+        self.draw_count_box.insert(0, '{:0>2}'.format(draw_count))
 
         # draw the game info
         self.canvas.create_text(760, 50, text='Black : ', font = ('Helvetica', 12), justify=tk.LEFT, tag='info')
