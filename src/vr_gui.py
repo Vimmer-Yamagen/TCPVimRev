@@ -1,11 +1,12 @@
 #!/usr/bin/python3
 # -*- coding: utf8 -*-
 import tkinter as tk
+import copy
 
 
 class GUI(object):
 
-    def __init__(self, root,):
+    def __init__(self, root, board):
         self.root = root
         self.frame = tk.Frame(self.root, width=960, height=720)
         self.frame.place(x=0, y=0)
@@ -15,18 +16,35 @@ class GUI(object):
         self.scrollbar = tk.Scrollbar(self.frame, orient=tk.VERTICAL)
         self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         self.listbox = tk.Listbox(self.frame, width=40, height=26, yscrollcommand=self.scrollbar.set)
-        self.listbox.place(x=700, y=200)
         self.scrollbar.config(command=self.listbox.yview)
+        self.listbox.place(x=700, y=200)
 
-        # the board Rewind / Skip Button
-        self.back_button = tk.Button(text='<', width=15, height=2)
-        self.back_button.place(x=700, y=640)
+        # board reference
+        self.board = board
+
+        # record the board.
+        self.record = {}
+        self.record_count = 0
+        self.record[self.record_count] = {'Board':copy.deepcopy(board.discs), 'newest_place':board.newest_place}
+        self.record_count += 1
+
+        # go before game start button.
+        self.back_button = tk.Button(text='<<', width=6, height=2)
+        self.back_button.place(x=695, y=640)
+        self.back_button.bind('<Button-1>', self.go_before_game)
+        # the board Rewind Button
+        self.back_button = tk.Button(text='<', width=6, height=2)
+        self.back_button.place(x=750, y=640)
         self.back_button.bind('<Button-1>', self.rewind)
-
-        self.forward_button = tk.Button(text='>', width=15, height=2)
-        self.forward_button.place(x=830, y=640)
+        # the board Skip Button
+        self.forward_button = tk.Button(text='>', width=6, height=2)
+        self.forward_button.place(x=840, y=640)
         self.forward_button.bind('<Button-1>', self.skip)
-        
+        # go game finish button.
+        self.forward_button = tk.Button(text='>>', width=6, height=2)
+        self.forward_button.place(x=895, y=640)
+        self.forward_button.bind('<Button-1>', self.go_after_game)
+
         self.b_name = None # black player name
         self.w_name = None # white player name
 
@@ -50,14 +68,24 @@ class GUI(object):
             self.end_flg = True
 
 
+    # go before game start button
+    def go_before_game(self, event):
+        self.record_count = 0
+
+
     # the board rewind button
     def rewind(self, event):
-        print('rewind')
+        self.record_count -= 1 if(self.record_count > 0) else 0
 
-    
+
     # the board skip button
     def skip(self, event):
-        print('skip')
+        self.record_count += 1 if(self.record_count < self.board.turn_count) else 0
+
+
+    # go after game start button
+    def go_after_game(self, event):
+        self.record_count = self.board.turn_count
 
 
     def setName(self, turn, name):
@@ -73,6 +101,17 @@ class GUI(object):
         game_info = '{:0>2}{:>8}{:>3}'.format(str(turn_count) + '.', turn + ' :', str(alphabet[placeloc % 10 - 1]) + str(int(placeloc / 10)))
         self.listbox.insert(tk.END, game_info)
 
+    
+    # return valid record count
+    def getValidRecordCount(self, ):
+        valid_count = self.record_count
+        while(True):
+            if(valid_count in self.record or valid_count == 0):
+                break
+            valid_count -= 1
+        return valid_count
+
+
     # draw the board.
     def draw(self, board,):
 
@@ -82,6 +121,12 @@ class GUI(object):
 
         # draw the board
         self.canvas.create_rectangle(40, 40, 680, 680, fill='#1E824C', tag="board")
+
+        # A ~ H, 1 ~ 8
+        alphabet_list = [chr(i) for i in range(65, 65 + 8)]
+        for index, alphabet in enumerate(alphabet_list):
+            self.canvas.create_text(80 + index * 80, 20, text=alphabet, font = ('Helvetica', 12), tag='board')
+            self.canvas.create_text(20, 80 + index * 80, text=str(index + 1), font = ('Helvetica', 12), tag='board')
 
         # draw squares on the board
         for i in range(9):
@@ -97,24 +142,25 @@ class GUI(object):
         self.canvas.create_oval(520 - 4, 520 - 4, 520 + 4, 520 + 4, fill="Black", outline="Black", tag="board")
 
         # draw discs
-        for index, disc in enumerate(board.discs):
+        draw_count = self.getValidRecordCount()
+        discs = self.record[draw_count]['Board']
+        newest_place = self.record[draw_count]['newest_place']
+        for index, disc in enumerate(discs):
             center_x = 40 + int((index-1) % 10) * 80 + 40
             center_y = 40 + int((index-10) / 10) * 80 + 40
-            if(disc == "Black"):    
+            if(disc == "Black"):
                 self.canvas.create_oval(center_x - 38, center_y - 38, center_x + 38, center_y + 38, fill="Black", outline="Black", tag="disc")
-            elif(disc == "White"):    
+            elif(disc == "White"):
                 self.canvas.create_oval(center_x - 39, center_y - 39, center_x + 39, center_y + 39, fill="White", outline="Black", tag="disc")
             elif(disc == "CanPlace"):
                 self.canvas.create_oval(center_x - 4, center_y - 4, center_x + 4, center_y + 4, fill="OliveDrab1", outline="OliveDrab1", tag="disc")
             # In case of the last placed disc, mark it
-            if(index == board.newest_place):
+            if(index == newest_place):
                 self.canvas.create_oval(center_x - 6, center_y - 6, center_x + 6, center_y + 6, fill="Red", outline="Red", tag="disc")
 
-        # A ~ H, 1 ~ 8
-        alphabet_list = [chr(i) for i in range(65, 65 + 8)]
-        for index, alphabet in enumerate(alphabet_list):
-            self.canvas.create_text(80 + index * 80, 20, text=alphabet, font = ('Helvetica', 12), tag='info')
-            self.canvas.create_text(20, 80 + index * 80, text=str(index + 1), font = ('Helvetica', 12), tag='info')
+        # ListBox highlight draw count
+        # self.listbox.see(draw_count - 1)
+        self.listbox.activate (draw_count - 1)
 
         # draw the game info
         self.canvas.create_text(760, 50, text='Black : ', font = ('Helvetica', 12), justify=tk.LEFT, tag='info')

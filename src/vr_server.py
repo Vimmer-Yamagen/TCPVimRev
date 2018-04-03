@@ -35,6 +35,7 @@ def server_core(board, gui,):
                     """ receive """
                     msg = sock.recv(bufsize)
                     msg = pickle.loads(msg)
+                    """ end receive """
 
                     print(msg) # print recv message
 
@@ -42,27 +43,50 @@ def server_core(board, gui,):
                     player_turn = msg['turn']
                     placeloc = msg['placeloc']
                     cand_move = board.getCanPlace(board.turn)
+                    next_turn_flg = False
 
                     # set player name
                     gui.setName(player_turn, msg['software_name'])
 
                     # place disc
                     if(player_turn == board.turn):
-                        if(board.reverseDisc(player_turn, placeloc) == True):
-                            board.newest_place = placeloc # last placed disc
-
+                        if(board.reverseDisc(player_turn, placeloc) == True): # Successfully placed the disc
+                            # set last placed disc
+                            board.newest_place = placeloc
+                            # go next turn
+                            next_turn_flg = True
                             # draw game info on the listbox
                             gui.addList(player_turn, board.turn_count, placeloc)
-                            board.turn_count += 1
+                            # switch game turn(Black to White or White to Black)
                             board.switch_turn()
+                            # get candidate place list
                             cand_move = board.getCanPlace(board.turn)
+                            # record the board.
+                            gui.record[board.turn_count] = {'Board':copy.deepcopy(board.discs), 'newest_place':board.newest_place}
+                            # reset pass count
                             board.pass_count = 0
 
-                        elif(msg['pass_flg'] == True): # player passes play
+                        # player can't place the disc in this turn.
+                        elif(msg['pass_flg'] == True):
+                            # switch game turn(Black to White or White to Black)
                             board.switch_turn()
+                            # get candidate place list
                             cand_move = board.getCanPlace(board.turn)
+                            # pass count +1
                             board.pass_count += 1
-                    """ end receive """
+
+                    # finish the game or server shutdown command is pressed.
+                    if(board.pass_count >= 2):
+                        print('game finished! gg!')
+                        return
+                    if(gui.end_flg):
+                        print('server shutdown!')
+                        return
+
+                    # go next turn
+                    if(next_turn_flg):
+                        gui.record_count += 1 if(gui.record_count == board.turn_count and board.turn_count < 60) else 0
+                        board.turn_count += 1 if(board.turn_count < 60) else 0
 
                     """ send """
                     server_info = {}
@@ -75,17 +99,10 @@ def server_core(board, gui,):
                         server_info['board'].turn = 'None'
                         server_info['candidate_move'] = []
 
-                    snd_msg = pickle.dumps(server_info) # dump pickle
+                    # dump pickle
+                    snd_msg = pickle.dumps(server_info)
                     sock.send(snd_msg)
                     """ end send """
-
-                    # finish the game or server shutdown command is pressed.
-                    if(board.turn_count > 60 or board.pass_count >= 2):
-                        print('game finished! gg!')
-                        return
-                    if(gui.end_flg):
-                        print('server shutdown!')
-                        return
     finally:
         for sock in readfds:
             sock.close()
@@ -100,7 +117,7 @@ def main():
     root.resizable(0, 0)  # Prohibit change of window size
 
     board = Board()
-    gui = GUI(root)
+    gui = GUI(root, board)
     server_thread = Thread(target=server_core, name='server_thread', args=(board, gui,))
     server_thread.start()
 
